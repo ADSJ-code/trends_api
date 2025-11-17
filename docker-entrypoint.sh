@@ -1,8 +1,15 @@
 #!/bin/sh
 set -e
 
-echo "Running Database Importer..."
-bundle exec rails importer:shopping
+host="mongodb"
+port="27017"
 
-echo "Starting Rails Server..."
-exec bundle exec rails s -b '0.0.0.0'
+until nc -z "$host" "$port"; do
+  sleep 1
+done
+
+if [ -f tmp/pids/server.pid ]; then
+  rm tmp/pids/server.pid
+fi
+
+exec "$@"

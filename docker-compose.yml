@@ -12,8 +12,7 @@ services:
     depends_on:
       - mongodb
     entrypoint: /rails/docker-entrypoint.sh
-
-    command: ["sh", "-c", "sleep 10 && rails server -b 0.0.0.0"]
+    command: ["rails", "server", "-b", "0.0.0.0"]
 
   mongodb:
     image: mongo:latest
