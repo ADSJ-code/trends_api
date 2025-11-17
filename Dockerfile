@@ -1,7 +1,7 @@
 FROM ruby:3.3.3-alpine AS builder
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache build-base postgresql-dev nodejs yarn less imagemagick
+    apk add --no-cache build-base postgresql-dev nodejs yarn less imagemagick tzdata
 
 WORKDIR /rails
 
