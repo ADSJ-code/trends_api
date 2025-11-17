@@ -1,4 +1,4 @@
-FROM ruby:3.3.3 as builder
+FROM ruby:3.3.3 AS builder
 
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs default-libmysqlclient-dev
 
