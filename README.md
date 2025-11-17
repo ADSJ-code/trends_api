@@ -26,7 +26,7 @@ This project is fully containerized. You only need **Git** and **Docker Compose*
 
 1.  Clone the repository:
     ```bash
-    git clone [https://github.com/ADSJ-code/trends_api.git](https://github.com/ADSJ-code/trends_api.git)
+    git clone https://github.com/ADSJ-code/trends_api.git
     ```
 
 2.  Enter the project directory:
