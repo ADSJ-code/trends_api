@@ -13,11 +13,14 @@ RUN bundle exec rails assets:precompile
 
 FROM ruby:3.3.3-slim
 
-RUN apt-get update -qq && apt-get install -y --no-install-recommends \
-    build-essential \
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
     libpq-dev \
     nodejs \
     default-libmysqlclient-dev \
+    netcat-openbsd \
+    && apt-get autoremove -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /rails
