@@ -7,17 +7,12 @@
 
 ## Summary
 
-This project is a RESTful API designed to extract and serve product trend data from the Google Shopping API. The application uses a decoupled import script (Rake task) to consume the SerpApi API, persists the data in a NoSQL database (MongoDB), and exposes it via a versioned JSON endpoint.
-
-This project's goal is to demonstrate backend proficiency, external API integration, and data persistence using a modern, containerized stack.
-
----
+This project is a RESTful API designed to extract and serve product trend data from the Google Shopping API. The application consumes the SerpApi API, persists the data in a NoSQL database (MongoDB), and exposes it via a versioned JSON endpoint.
 
 ## Tech Stack
 
 * **Backend:** Ruby 3.3.3, Ruby on Rails 8.0.2 (API-only)
 * **Database:** MongoDB
-* **ODM (Object-Document Mapper):** Mongoid
 * **External Data Source:** [SerpApi Google Shopping API](https://serpapi.com/)
 * **Containerization:** Docker & Docker Compose
 
@@ -39,28 +34,36 @@ This project is fully containerized. You only need **Git** and **Docker Compose*
     cd trends_api
     ```
 
-3.  Create your environment file from the example:
+3.  Create your environment file:
     ```bash
     cp .env.example .env
     ```
 
-4.  Edit the `.env` file and add your personal SerpApi API Key:
-    ```bash
-    nano .env
-    ```
-    (Paste `SERPAPI_API_KEY="YOUR_API_KEY_HERE"` and save the file)
+4.  Edit the `.env` file and add your `SERPAPI_API_KEY`.
 
 ### 2. Run the Application
 
-Execute the single command below. This will build the images, start the services in detached mode (`-d`), and automatically run the database import task.
+Execute the single command below. This will build the images and start the services (API + DB).
 
 ```bash
 docker-compose up -d --build
 ```
 
-Wait ~30 seconds for the docker-entrypoint.sh script to finish importing the data into the MongoDB container.
+Wait ~1 minute for the build and for the services to boot.
 
-### 3. Test the API
+### 3. Import Data (Required)
+
+The API is running, but the database is empty. Run the following command to populate the MongoDB database with data from SerpApi.
+
+```bash
+docker-compose exec app rake importer:shopping
+```
+
+You should see an output: "🤖 Starting product import robot..."
+
+### 4. Test the API
+
+Now that the data is imported, test the main endpoint using curl:
 
 ```bash
 curl -X GET http://localhost:3000/api/v1/trends/recent
@@ -68,17 +71,18 @@ curl -X GET http://localhost:3000/api/v1/trends/recent
 
 Expected Output: You should see a JSON response with the imported shopping trends data.
 
-[
-  {
-    "_id": {
-      "$oid": "..."
-    },
-    "product_id": "...",
-    "title": "Example Product Title",
-    "price": "R$XX,XX",
-    "link": "https://...",
-    "source": "...",
-    "created_at": "...",
-    "updated_at": "..."
-  }
-]
+```json
+    [
+      {
+        "_id": {
+          "$oid": "..."
+        },
+        "product_id": "product_XYZ",
+        "title": "Example Product Title",
+        "price": "R$199,99",
+        "link": "[https://example.com/product/123](https://example.com/product/123)",
+        "source": "Google Shopping",
+        "created_at": "2025-11-17T15:00:00Z",
+        "updated_at": "2025-11-17T15:00:00Z"
+      }
+    ]
