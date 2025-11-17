@@ -1,6 +1,7 @@
 class Product
   include Mongoid::Document
   include Mongoid::Timestamps
+  field :product_id, type: String 
   field :title, type: String
   field :link, type: String
   field :price, type: String
