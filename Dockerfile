@@ -1,7 +1,6 @@
-FROM ruby:3.3.3-alpine AS builder
+FROM ruby:3.3.3 AS builder
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache build-base postgresql-dev nodejs yarn less imagemagick tzdata
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs default-libmysqlclient-dev
 
 WORKDIR /rails
 
@@ -12,11 +11,17 @@ COPY . .
 
 RUN bundle exec rails assets:precompile
 
-FROM ruby:3.3.3-alpine
+FROM ruby:3.3.3-slim
 
-RUN apk update && \
-    apk add --no-cache libpq nodejs yarn less imagemagick netcat-openbsd \
-    && rm -rf /var/cache/apk/*
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+    libpq-dev \
+    nodejs \
+    default-libmysqlclient-dev \
+    netcat-openbsd \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /rails
 
