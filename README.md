@@ -23,38 +23,62 @@ This project's goal is to demonstrate backend proficiency, external API integrat
 
 ---
 
-## 🏁 How to Run (Docker)
+## 🏁 How to Run (5-Minute Setup)
 
-This project is fully containerized. You only need Docker and Docker Compose installed to run it.
+This project is fully containerized. You only need **Git** and **Docker Compose** installed to run it.
 
 ### 1. Configuration
 
 1.  Clone the repository:
     ```bash
     git clone [https://github.com/ADSJ-code/trends_api.git](https://github.com/ADSJ-code/trends_api.git)
+    ```
+
+2.  Enter the project directory:
+    ```bash
     cd trends_api
     ```
 
-2.  Create your environment file:
+3.  Create your environment file from the example:
     ```bash
     cp .env.example .env
     ```
 
-3.  Edit the `.env` file and add your personal SerpApi API Key:
+4.  Edit the `.env` file and add your personal SerpApi API Key:
     ```bash
     nano .env
     ```
-    ```
-    SERPAPI_API_KEY="YOUR_API_KEY_HERE"
-    ```
+    (Paste `SERPAPI_API_KEY="YOUR_API_KEY_HERE"` and save the file)
 
 ### 2. Run the Application
 
-With Docker running, execute the following commands in your terminal:
+Execute the single command below. This will build the images, start the services in detached mode (`-d`), and automatically run the database import task.
 
 ```bash
-# 1. Build the images (This may take a few minutes the first time)
-docker-compose build
+docker-compose up -d --build
+```
 
-# 2. Start all services (API + DB)
-docker-compose up
+Wait ~30 seconds for the docker-entrypoint.sh script to finish importing the data into the MongoDB container.
+
+### 3. Test the API
+
+```bash
+curl -X GET http://localhost:3000/api/v1/trends/recent
+```
+
+Expected Output: You should see a JSON response with the imported shopping trends data.
+
+[
+  {
+    "_id": {
+      "$oid": "..."
+    },
+    "product_id": "...",
+    "title": "Example Product Title",
+    "price": "R$XX,XX",
+    "link": "https://...",
+    "source": "...",
+    "created_at": "...",
+    "updated_at": "..."
+  }
+]
