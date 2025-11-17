@@ -66,7 +66,7 @@ You should see an output: "🤖 Starting product import robot..."
 Now that the data is imported, test the main endpoint using curl:
 
 ```bash
-curl -X GET http://localhost:3000/api/v1/trends/recent
+curl -X GET http://localhost:3000/api/v1/trends
 ```
 
 Expected Output: You should see a JSON response with the imported shopping trends data.
