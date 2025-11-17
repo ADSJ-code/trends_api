@@ -1,33 +1,39 @@
-# lib/tasks/importer.rake
+require 'serpapi'
 
 namespace :importer do
-  desc "Importa produtos em alta da API do Google Shopping via SerpApi"
+  desc "Imports trending products from Google Shopping API via SerpApi"
   task shopping: :environment do
-    puts "🤖 Iniciando o robô importador de produtos..."
+    puts "🤖 Starting product import robot..."
 
-    # Define os parâmetros da busca
-    params = {
-      q: "trending tech gifts",
-      engine: "google_shopping",
-      api_key: Rails.application.credentials.serpapi[:api_key]
-    }
-
-    # Cria uma nova busca
-    search = SerpApiSearch.new(params)
-    
-    puts "🔎 Procurando por: '#{params[:q]}'"
-
-    # Executa a busca e obtém o resultado como um hash
-    results = search.get_hash
-
-    # Verifica se a API retornou a lista de produtos
-    unless results[:shopping_results]
-      puts "❌ Nenhum resultado de compras encontrado. Verifique sua chave de API ou a busca."
+    api_key = ENV['SERPAPI_API_KEY']
+    unless api_key
+      puts "❌ ERROR: SERPAPI_API_KEY environment variable is not set."
       next
     end
 
-    # Processa e guarda cada produto encontrado
-    puts "✅ Encontrados #{results[:shopping_results].count} produtos. Guardando na base de dados..."
+    params = {
+      q: "trending tech gifts",
+      engine: "google_shopping",
+      api_key: api_key
+    }
+
+    client = SerpApi::Client.new(params)
+    
+    puts "🔎 Searching for: '#{params[:q]}'"
+
+    results = client.search
+
+    if results[:error]
+      puts "❌ API ERROR: #{results[:error]}"
+      next
+    end
+
+    unless results[:shopping_results]
+      puts "❌ No shopping results found. Check your API key or query."
+      next
+    end
+
+    puts "✅ Found #{results[:shopping_results].count} products. Saving to database..."
     results[:shopping_results].each do |product_data|
       Product.find_or_create_by!(link: product_data[:link]) do |product|
         product.title     = product_data[:title]
@@ -39,6 +45,6 @@ namespace :importer do
       end
     end
 
-    puts "🏆 Importação concluída! Total de #{Product.count} produtos na base de dados."
+    puts "🏆 Import complete! Total of #{Product.count} products in the database."
   end
 end
