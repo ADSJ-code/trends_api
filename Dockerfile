@@ -18,7 +18,6 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     libpq-dev \
     nodejs \
     default-libmysqlclient-dev \
-    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /rails
