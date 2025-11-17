@@ -38,7 +38,6 @@ Rails.application.configure do
   # Logger is used to debug and understand application progress.
   config.logger = ActiveSupport::Logger.new($stdout)
   config.logger.formatter = ::Logger::Formatter.new
-  config.logger.debug_purpose = true
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
@@ -47,7 +46,7 @@ Rails.application.configure do
   # config.action_view.annotate_rendered_view_with_filenames = true
 
   # Highlight code that triggered database queries in logs.
-  # config.active_record.highlight_all_queries_in_log = true # Linha desnecessária para Mongoid
+  # config.active_record.highlight_all_queries_in_log = true 
 
   # Raises error for missing translations in views.
   # config.action_view.raise_on_missing_translations = true
