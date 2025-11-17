@@ -1,26 +1,27 @@
+version: '3.8'
+
 services:
   app:
     build: .
-    command: bash -c "bundle exec rake importer:shopping && bundle exec puma -C config/puma.rb"
-    volumes:
-      - .:/app
     ports:
       - "3000:3000"
+    volumes:
+      - .:/rails
+    environment:
+      - MONGO_HOST=mongodb
+      - RAILS_ENV=development
+      - SERPAPI_API_KEY=${SERPAPI_API_KEY}
     depends_on:
       - mongodb
-    env_file:
-      - .env
-    environment:
-      MONGODB_HOST: mongodb
-      MONGODB_PORT: 27017
-      
+    entrypoint: /rails/docker-entrypoint.sh
+    command: ["rails", "server", "-b", "0.0.0.0"]
+
   mongodb:
-    image: mongo:4.4
+    image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
 volumes:
-  
   mongo_data:
