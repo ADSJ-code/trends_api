@@ -1,23 +1,26 @@
 services:
-  api:
+  app:
     build: .
+    command: bash -c "bundle exec rake importer:shopping && bundle exec puma -C config/puma.rb"
     volumes:
-      - .:/rails
+      - .:/app
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - mongodb
     env_file:
-      - ./.env
+      - .env
     environment:
-      MONGODB_URL: mongodb://db:27017/trends_api_production
-
-  db:
-    image: mongo:latest
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      
+  mongodb:
+    image: mongo:4.4
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
 volumes:
+  
   mongo_data:

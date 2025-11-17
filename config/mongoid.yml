@@ -3,4 +3,15 @@ development:
     default:
       database: trends_api_dev
       hosts:
-        - localhost:27017
+        - <%= ENV.fetch('MONGO_HOST', 'localhost') %>:27017
+
+test:
+  clients:
+    default:
+      database: trends_api_test
+      hosts:
+        - <%= ENV.fetch('MONGO_HOST', 'localhost') %>:27017
+      options:
+        read:
+          mode: :primary
+        max_pool_size: 1
